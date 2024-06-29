@@ -1,0 +1,19 @@
+{
+  "name": "crunchyroll",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@cucumber/cucumber": "^10.8.0",
+    "selenium-webdriver": "^4.22.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
