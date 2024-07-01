@@ -1,6 +1,6 @@
 const assert = require("assert");
 const { Given, When, Then } = require("@cucumber/cucumber");
-const { Builder, By, Key } = require("selenium-webdriver");
+const { Builder, By, Key, until } = require("selenium-webdriver");
 require("dotenv").config();
 
 const email = process.env.EMAIL;
@@ -22,6 +22,10 @@ Given("user chooses the Elements section", async function () {
 
 Given("user chooses the Text Box option", async function () {
   await this.driver.findElement(By.id("item-0")).click();
+});
+
+Given("user chooses the Check Box option", async function () {
+  await this.driver.findElement(By.id("item-1")).click();
 });
 
 When("user fills in the Full Name field", async function () {
@@ -56,6 +60,37 @@ When("user click the Submit button", async function () {
   await this.driver.findElement(By.id("submit")).click();
 });
 
+When("user clicks on the checkbox for the Home folder", async function () {
+  await this.driver
+    .findElement(By.xpath(`//*[@id="tree-node"]/ol/li/span/label`))
+    .click();
+});
+
+When("user opens all subfolders", async function () {
+  await this.driver
+    .findElement(By.xpath(`//*[@id="tree-node"]/ol/li/span/button`))
+    .click();
+  await this.driver
+    .findElement(By.xpath(`//*[@id="tree-node"]/ol/li/ol/li[1]/span/button`))
+    .click();
+  await this.driver
+    .findElement(By.xpath(`//*[@id="tree-node"]/ol/li/ol/li[2]/span/button`))
+    .click();
+  await this.driver
+    .findElement(By.xpath(`//*[@id="tree-node"]/ol/li/ol/li[3]/span/button`))
+    .click();
+  await this.driver
+    .findElement(
+      By.xpath(`//*[@id="tree-node"]/ol/li/ol/li[2]/ol/li[1]/span/button`)
+    )
+    .click();
+  await this.driver
+    .findElement(
+      By.xpath(`//*[@id="tree-node"]/ol/li/ol/li[2]/ol/li[2]/span/button`)
+    )
+    .click();
+});
+
 Then("user sees his data in the output window", async function () {
   const output = await this.driver.findElement(By.id("output"));
   const outputName = await output.findElement(By.id("name")).getText();
@@ -83,4 +118,67 @@ Then("user sees his data in the output window", async function () {
   } finally {
     await this.driver.quit();
   }
+});
+
+Then("all subfolders of Home folder are selected", async function () {
+  const container = await this.driver.findElement(
+    By.css(".check-box-tree-wrapper")
+  );
+  const checkboxes = await container.findElements(
+    By.css('input[type="checkbox"]')
+  );
+
+  try {
+    for (let checkbox of checkboxes) {
+      const isSelected = await checkbox.isSelected();
+      assert.strictEqual(isSelected, true);
+    }
+  } catch (error) {
+    console.log(`Check Box Error: error`);
+    throw error;
+  }
+  // finally {
+  //   await this.driver.quit();
+  // }
+});
+
+Then("user sees selected subfolders in the output window", async function () {
+  const result = await this.driver.findElement(By.id("result"));
+  const spanElements = await result.findElements(By.css("span"));
+
+  let combinedText = "";
+  let spanText = [];
+  for (let spanElement of spanElements) {
+    const text = await spanElement.getText();
+    spanText.push(text);
+  }
+
+  combinedText = spanText.join(" ");
+
+  let labelText = "";
+  let labels = [];
+  let checkedLables = "You have selected : ";
+
+  const container = await this.driver.findElement(
+    By.css(".check-box-tree-wrapper")
+  );
+  const checkboxes = await container.findElements(
+    By.css('input[type="checkbox"]')
+  );
+
+  for (let checkbox of checkboxes) {
+    const isSelected = await checkbox.isSelected();
+    if (isSelected) {
+      const parent = await checkbox.findElement(By.xpath(".."));
+      if ((await parent.getTagName()) === "label") {
+        const forAttr = await parent.getAttribute("for");
+        const wordsForAttr = forAttr.split("-");
+        labelText = wordsForAttr[wordsForAttr.length - 1];
+        labels.push(labelText);
+      }
+    }
+  }
+
+  checkedLables += labels.join(" ");
+  assert.strictEqual(checkedLables, combinedText);
 });
