@@ -137,9 +137,6 @@ Then("all subfolders of Home folder are selected", async function () {
     console.log(`Check Box Error: error`);
     throw error;
   }
-  // finally {
-  //   await this.driver.quit();
-  // }
 });
 
 Then("user sees selected subfolders in the output window", async function () {
@@ -180,5 +177,12 @@ Then("user sees selected subfolders in the output window", async function () {
   }
 
   checkedLables += labels.join(" ");
-  assert.strictEqual(checkedLables, combinedText);
+
+  try {
+    assert.strictEqual(checkedLables, combinedText);
+  } catch (error) {
+    throw error;
+  } finally {
+    await this.driver.quit();
+  }
 });
