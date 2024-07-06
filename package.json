@@ -10,7 +10,11 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@babel/core": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
+    "@babel/register": "^7.24.6",
     "@cucumber/cucumber": "^10.8.0",
+    "chromedriver": "^126.0.4",
     "selenium-webdriver": "^4.22.0"
   },
   "dependencies": {

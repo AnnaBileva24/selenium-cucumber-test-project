@@ -1,5 +1,6 @@
 module.exports = {
-  default: `--format-options '{"snippetInterface": "synchronous"}'`,
+  default:
+    "--require-module @babel/register --require features/**/*.js --require support/**/*.js --format progress",
 };
 
 require("dotenv").config();
