@@ -40,7 +40,6 @@ When("user click the Submit button", async function () {
 });
 
 Then("user sees his data in the output window", async function () {
-  const output = await this.driver.findElement(By.id("output"));
   try {
     assert.strictEqual(
       await this.elementsPage.getOutputName(),
